@@ -68,7 +68,6 @@ const routes = [
   { path: '/buttons/brand-buttons', name: 'Brand Buttons', component: BrandButtons },
   { path: '/icons', exact: true, name: 'Icons', component: CoreUIIcons },
   { path: '/icons/coreui-icons', name: 'CoreUI Icons', component: CoreUIIcons },
-  { path: '/icons/flags', name: 'Flags', component: Flags },
   { path: '/icons/font-awesome', name: 'Font Awesome', component: FontAwesome },
   { path: '/icons/simple-line-icons', name: 'Simple Line Icons', component: SimpleLineIcons },
   { path: '/notifications', exact: true, name: 'Notifications', component: Alerts },
