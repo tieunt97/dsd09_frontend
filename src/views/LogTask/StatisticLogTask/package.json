@@ -1,0 +1,7 @@
+{
+    "name": "StatisticLogTask",
+    "version": "0.0.0",
+    "private": true,
+    "main": "./StatisticLogTask.js"
+}
+  
