@@ -10,6 +10,7 @@ export async function statisticDailyLogTask(date) {
     if(date !== undefined) {
         params.date = date;
     }
+    console.log("params: ", params)
 
     return await axios.get(DAILY_LOG_TASK_API, {
         params,
