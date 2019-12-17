@@ -10,8 +10,8 @@ const StatisticLogTask = React.lazy(() => import('./views/LogTask/StatisticLogTa
 const routes = [
   { path: '/', exact: true, name: 'Home' },
   { path: '/dashboard', name: 'Dashboard', component: Dashboard },
-  { path: '/users', exact: true,  name: 'Quản lý người dùng', component: Users },
-  { path: '/users/:id', exact: true, name: 'Chi tiết người dùng', component: User },
+  { path: '/users', exact: true,  name: 'User Management', component: Users },
+  { path: '/users/:id', exact: true, name: 'User Details', component: User },
   { path: '/log-task', exact: true, name: 'Log Task List', component: LogTaskList },
   { path: '/statistic-log-task', exact: true, name: 'Statistic Log Task', component: StatisticLogTask},
 ];
