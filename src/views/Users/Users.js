@@ -1,11 +1,15 @@
-import React, { Component } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Badge, Card, CardBody, CardHeader, Col, Row, Table, Button} from 'reactstrap';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { confirmAlert } from 'react-confirm-alert';
+import 'react-confirm-alert/src/react-confirm-alert.css';
 import {Container} from './user.style';
 import apis from '../../api/User/UserRestAPI';
 import { userRoles } from '../../constants/constants';
+import UserModal from './UserModal';
+import ResetPasswordModal from './ResetPasswordModal';
 
 toast.configure({
   autoClose: 3000,
@@ -25,8 +29,15 @@ function UserRow(props) {
             'primary'
   }
 
-  const handleDeleteUser =(userId) => {
-    props.handleDeleteUser(userId);
+  const confirmDeleteUser =(userId) => {
+    const confirmDelete = window.confirm('Bạn có chắc chắn muốn xóa người dùng này không?');
+    if(confirmDelete) props.handleDeleteUser(userId);
+  }
+
+  function openUserModal(user) {
+    const title = 'Update user';
+    const type = 'update'
+    props.openUserModal(title, user, type);
   }
 
   return (
@@ -49,20 +60,23 @@ function UserRow(props) {
       <td className="th-center-text">{user.registered}</td>
       <td className="th-center-text"><Link to={userLink}><Badge color={getBadge(user.status)}>{user.status}</Badge></Link></td>
       <td className="th-center-text">
-        <i className="icon-trash" onClick={() => handleDeleteUser(user.id)}></i>
-        <i className="icon-pencil"></i>
+        <i className="icon-trash" onClick={() => confirmDeleteUser(user.id)}></i>
+        <i className="icon-pencil" onClick={() => openUserModal(user)}></i>
       </td>
     </tr>
   )
 }
 
-class Users extends Component {
-  constructor(props) {
-    super(props);
-    this.state = { userList: [] };
-  }
+function Users() {
+  const [ userList, setUserList ] = useState([]);
+  const [ isOpen, setIsOpen ] = useState(false);
+  const [title, setTitle] = useState('');
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [action, setAction] = useState('');
 
-  async getAllUser() {
+  const [ isOpenReset, setIsOpenReset ] = useState(false);
+
+  async function getAllUser() {
     try {
       const {data} = await apis.getAllUser();
       if(!data.status) throw new Error();
@@ -75,76 +89,87 @@ class Users extends Component {
           registered: item.created_at,
           roles: item.roles,
           status: item.status,
+          password: item.password,
         }));
-        this.setState({
-          userList: usersData,
-        });
+        setUserList(usersData);
       }
     } catch (error) {
       console.log('error', error);
     }
   }
 
-  async componentDidMount() {
-    this.getAllUser();
-  }
+  useEffect(() => {
+    getAllUser();
+  }, []);
 
-  handleDeleteUser = async (userId) => {
+  async function handleDeleteUser(userId) {
     try {
       const {data} = await apis.deleteUser(userId);
       if(!data.status) throw new Error();
       toast.success("Xóa thành công người dùng!");
-      this.getAllUser();
+      const restOfUserList = userList.filter(item => item.id !== userId);
+      setUserList(restOfUserList);
     } catch (error) {
       console.log('error', error);
       toast.error("Có lỗi xảy ra! Không thể xóa người dùng");
     }
   }
 
-  render() {
-
-    // const userList = usersData.filter((user) => user.id < 10)
-    const { userList } = this.state;
-
-    return (
-      <Container>
-        <div className="animated fadeIn">
-          <Row>
-            <Col>
-              <Card>
-                <CardHeader style={{'display': 'flex', 'justifyContent': 'space-between'}}>
-                  <div>
-                    <i className="fa fa-align-justify"></i> Users <small className="text-muted">list</small>
-                  </div>
-                  <Button color="primary">Create user</Button>
-                </CardHeader>
-                <CardBody>
-                  <Table responsive hover>
-                    <thead>
-                      <tr>
-                        <th scope="col" className="th-center-text">id</th>
-                        <th scope="col" className="th-center-text">email</th>
-                        <th scope="col" className="th-center-text">name</th>
-                        <th scope="col" className="th-center-text">role</th>
-                        <th scope="col" className="th-center-text">registered</th>
-                        <th scope="col" className="th-center-text">status</th>
-                        <th scope="col" className="th-center-text">action</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {userList.map((user, index) =>
-                        <UserRow key={index} user={user} handleDeleteUser={this.handleDeleteUser}/>
-                      )}
-                    </tbody>
-                  </Table>
-                </CardBody>
-              </Card>
-            </Col>
-          </Row>
-        </div>
-      </Container>
-    )
+  function openUserModal(title, user, type) {
+    console.log('vao', user);
+    setTitle(title);
+    setSelectedUser(user);
+    setAction(type);
+    setIsOpen(true);
   }
+
+  function openResetPasswordModal() {
+    setIsOpenReset(true);
+  }
+
+  return (
+    <Container>
+      <ResetPasswordModal isOpenReset={isOpenReset} setIsOpenReset={setIsOpenReset} />
+      <UserModal isOpen={isOpen} setIsOpen={setIsOpen} title={title} selectedUser={selectedUser} action={action} />
+      <div className="animated fadeIn">
+        <Row>
+          <Col>
+            <Card>
+              <CardHeader style={{'display': 'flex', 'justifyContent': 'space-between'}}>
+                <div>
+                  <i className="fa fa-align-justify"></i> Users <small className="text-muted">list</small>
+                </div>
+                <div>
+                  <Button color="danger" style={{'marginRight': '10px'}} onClick={() => openResetPasswordModal()}>Reset Password</Button>
+                  <Button color="primary" onClick={() => openUserModal('Create user', null, 'create')}>Create user</Button>
+                </div>
+              </CardHeader>
+              <CardBody>
+                <Table responsive hover>
+                  <thead>
+                    <tr>
+                      <th scope="col" className="th-center-text">id</th>
+                      <th scope="col" className="th-center-text">email</th>
+                      <th scope="col" className="th-center-text">name</th>
+                      <th scope="col" className="th-center-text">role</th>
+                      <th scope="col" className="th-center-text">registered</th>
+                      <th scope="col" className="th-center-text">status</th>
+                      <th scope="col" className="th-center-text">action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {userList.map((user, index) =>
+                      <UserRow key={index} user={user} handleDeleteUser={handleDeleteUser} openUserModal={openUserModal} />
+                    )}
+                  </tbody>
+                </Table>
+              </CardBody>
+            </Card>
+          </Col>
+        </Row>
+      </div>
+    </Container>
+  )
 }
 
 export default Users;
