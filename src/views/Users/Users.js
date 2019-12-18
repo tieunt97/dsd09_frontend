@@ -1,20 +1,32 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { Badge, Card, CardBody, CardHeader, Col, Row, Table, Button, Input} from 'reactstrap';
+import { Badge, Card, CardBody, CardHeader, Col, Row, Table, Button} from 'reactstrap';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import {Container} from './user.style';
 import apis from '../../api/User/UserRestAPI';
 import { userRoles } from '../../constants/constants';
+
+toast.configure({
+  autoClose: 3000,
+  draggable: true,
+  position: toast.POSITION.TOP_CENTER,
+});
 
 function UserRow(props) {
   const user = props.user
   const userLink = `/users/${user.id}`
 
   const getBadge = (status) => {
-    return status === 'Active' ? 'success' :
-      status === 'Inactive' ? 'secondary' :
-        status === 'Pending' ? 'warning' :
-          status === 'Banned' ? 'danger' :
+    return status === 'active' ? 'success' :
+      status === 'inactive' ? 'secondary' :
+        status === 'pending' ? 'warning' :
+          status === 'banned' ? 'danger' :
             'primary'
+  }
+
+  const handleDeleteUser =(userId) => {
+    props.handleDeleteUser(userId);
   }
 
   return (
@@ -37,7 +49,7 @@ function UserRow(props) {
       <td className="th-center-text">{user.registered}</td>
       <td className="th-center-text"><Link to={userLink}><Badge color={getBadge(user.status)}>{user.status}</Badge></Link></td>
       <td className="th-center-text">
-        <i className="icon-trash"></i>
+        <i className="icon-trash" onClick={() => handleDeleteUser(user.id)}></i>
         <i className="icon-pencil"></i>
       </td>
     </tr>
@@ -54,7 +66,7 @@ class Users extends Component {
     try {
       const {data} = await apis.getAllUser();
       if(!data.status) throw new Error();
-      console.log('result', data.result);
+      console.log('data.result', data.result);
       if(data.result && data.result.length) {
         const usersData = data.result.map(item => ({
           id: item.id,
@@ -75,6 +87,18 @@ class Users extends Component {
 
   async componentDidMount() {
     this.getAllUser();
+  }
+
+  handleDeleteUser = async (userId) => {
+    try {
+      const {data} = await apis.deleteUser(userId);
+      if(!data.status) throw new Error();
+      toast.success("Xóa thành công người dùng!");
+      this.getAllUser();
+    } catch (error) {
+      console.log('error', error);
+      toast.error("Có lỗi xảy ra! Không thể xóa người dùng");
+    }
   }
 
   render() {
@@ -109,7 +133,7 @@ class Users extends Component {
                     </thead>
                     <tbody>
                       {userList.map((user, index) =>
-                        <UserRow key={index} user={user}/>
+                        <UserRow key={index} user={user} handleDeleteUser={this.handleDeleteUser}/>
                       )}
                     </tbody>
                   </Table>

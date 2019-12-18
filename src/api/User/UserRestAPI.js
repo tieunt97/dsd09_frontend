@@ -17,6 +17,22 @@ async function getAllUser(userId) {
   }
 }
 
+async function deleteUser(userId) {
+  try {
+    const data = {};
+    if(userId) {
+      data.userId = userId;
+    }
+    const response = await axios.delete(`${BASE_URL}/users`, {
+      data,
+    });
+    return response;
+  } catch (error) {
+    return error.response;
+  }
+}
+
 export default {
-  getAllUser
+  getAllUser,
+  deleteUser,
 };

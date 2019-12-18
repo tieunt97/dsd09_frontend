@@ -35,4 +35,20 @@ export const Container = styled.div`
     flex-direction: column;
     justify-content: space-around;
   }
+
+  .icon-trash:hover {
+    color: red;
+    cursor: pointer;
+  }
+
+  .icon-pencil:hover {
+    color: #20a8d8;
+    cursor: pointer;
+  }
+
+  .icon-plus:hover {
+    color: #20a8d8;
+    cursor: pointer;
+  }
+
 `
