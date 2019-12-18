@@ -15,8 +15,13 @@ export default {
           icon: 'icon-book-open',
         },
         {
-          name: 'Statistic Log Task',
-          url: '/statistic-log-task',
+          name: 'Statistic Daily',
+          url: '/statistic-log-task-daily',
+          icon: 'icon-book-open',
+        },
+        {
+          name: 'Statistic Monthly',
+          url: '/statistic-log-task-monthly',
           icon: 'icon-book-open',
         },
       ],

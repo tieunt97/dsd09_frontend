@@ -1,8 +1,9 @@
 import axios from '../axiosCreator';
+import { BASE_URL_LOG_SERVICE } from '../../constants/constants';
 
-const DAILY_LOG_TASK_API = 'log-task/daily';
-const MONTHLY_LOG_TASK_API = 'log-task/monthly';
-const GET_LOG_TASK_API = 'log-task';
+const DAILY_LOG_TASK_API = `${BASE_URL_LOG_SERVICE}/log-task/daily`;
+const MONTHLY_LOG_TASK_API = `${BASE_URL_LOG_SERVICE}/log-task/monthly`;
+const GET_LOG_TASK_API = `${BASE_URL_LOG_SERVICE}/log-task`;
 
 export async function statisticDailyLogTask(date) {
     const params = {};
@@ -20,11 +21,12 @@ export async function statisticDailyLogTask(date) {
 export async function statisticMonthlyLogTask(startDate, endDate)  {
     const params = {}
     if(startDate !== undefined) {
-        params.startDate = startDate;
+        params.startDate = startDate.split("-").slice(0, -1).join("-");
     }
     if(endDate !== undefined) {
-        params.endDate = endDate;
+        params.endDate = endDate.split("-").slice(0, -1).join("-");
     }
+    console.log("params: ", params);
 
     return await axios.get(MONTHLY_LOG_TASK_API, {
         params,

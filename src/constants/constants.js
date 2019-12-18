@@ -1,3 +1,5 @@
+export const BASE_URL_LOG_SERVICE = "http://localhost:8000/api/v1"
+
 export const LOG_ACTIONS = {
   POST: 'POST',
   PUT: 'PUT',
