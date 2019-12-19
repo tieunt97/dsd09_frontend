@@ -10,19 +10,34 @@ export default {
       icon: 'icon-book-open',
       children: [
         {
-          name: 'Log Task List',
+          name: '\u00A0\u00A0Log Task List',
           url: '/log-task',
           icon: 'icon-book-open',
+          class:'custom-sub-menu'
         },
         {
-          name: 'Statistic Daily',
+          name: '\u00A0\u00A0Statistic Daily',
           url: '/statistic-log-task-daily',
           icon: 'icon-book-open',
+          class:'custom-sub-menu'
         },
         {
-          name: 'Statistic Monthly',
+          name: '\u00A0\u00A0Statistic Monthly',
           url: '/statistic-log-task-monthly',
           icon: 'icon-book-open',
+          class:'custom-sub-menu'
+        },
+      ],
+    },
+    {
+      name: 'Log Department',
+      icon: 'icon-book-open',
+      children: [
+        {
+          name: '\u00A0\u00A0Statistic Log',
+          url: '/statistic-log-department',
+          icon: 'icon-book-open',
+          class:'custom-sub-menu',
         },
       ],
     },

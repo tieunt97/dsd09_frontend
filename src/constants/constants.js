@@ -47,3 +47,25 @@ export const userRoles = {
     key: 'STAFF',
   },
 };
+
+// Successful
+export const LOG_DEPARTMENT = {
+  CREATE: "CREATE",
+  DELETE: "DELETE",
+  UPDATE: "UPDATE",
+}
+
+export const LOG_STATUS = {
+  SUCCESSFUL: "SUCCESSFUL",
+  FAILURE: "FAILURE",
+}
+
+export const STATISTIC_DEPRTMENT_TYPE = {
+  1: "Theo ngày",
+  2: "Theo tháng",
+  3: "Theo năm",
+  4: "Theo trạng thái",
+  5: "Theo action & ngày",
+  6: "Theo action & tháng",
+  7: "Theo action & năm",
+}
