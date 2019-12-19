@@ -8,6 +8,45 @@ import qs from 'query-string';
 import { statisticDailyLogTask } from '../../../api/LogTask/LogTaskRestAPI';
 import { TASK_TYPE, LOG_ACTIONS } from '../../../constants/constants';
 
+const initOptions = {
+
+    chart: {
+        type: 'column'
+    },
+
+    title: {
+        text: 'Statistic Log Task Daily'
+    },
+
+    xAxis: {
+        categories: [],
+    },
+
+    yAxis: {
+        allowDecimals: false,
+        min: 0,
+        title: {
+            text: 'Number of actions'
+        }
+    },
+
+    tooltip: {
+        formatter: function () {
+            return '<b>' + this.x + '</b><br/>' +
+            this.series.userOptions.stack + " - " + this.series.name + ': ' + this.y + '<br/>' +
+                'Total: ' + this.point.stackTotal;
+        }
+    },
+
+    plotOptions: {
+        column: {
+            stacking: 'normal'
+        }
+    },
+
+    series: [],
+};
+
 class StatisticLogTaskDaily extends Component {
     constructor(props) {
         super(props);
@@ -31,10 +70,12 @@ class StatisticLogTaskDaily extends Component {
     
     statisticDatyLogTask = (date) => {
         statisticDailyLogTask(date).then(success => {
+            console.log("success: ", success);
             const results = success.data.results;
             if (Object.entries(results).length === 0 && results.constructor === Object) {
                 this.setState({
                     date: date != undefined ? moment(date, "YYYY-MM-DD").toDate() : new Date(),
+                    options: initOptions,
                 });
             } else {
                 const keys = Object.keys(results).sort((a, b) => a - b);
@@ -68,41 +109,10 @@ class StatisticLogTaskDaily extends Component {
                     });
                 }
                 const options = {
-
-                    chart: {
-                        type: 'column'
-                    },
-                
-                    title: {
-                        text: 'Statistic Log Task Daily'
-                    },
-                
+                    ...initOptions,
                     xAxis: {
                         categories: keys.map(k => k + "h"),
                     },
-                
-                    yAxis: {
-                        allowDecimals: false,
-                        min: 0,
-                        title: {
-                            text: 'Number of actions'
-                        }
-                    },
-                
-                    tooltip: {
-                        formatter: function () {
-                            return '<b>' + this.x + '</b><br/>' +
-                            this.series.userOptions.stack + " - " + this.series.name + ': ' + this.y + '<br/>' +
-                                'Total: ' + this.point.stackTotal;
-                        }
-                    },
-                
-                    plotOptions: {
-                        column: {
-                            stacking: 'normal'
-                        }
-                    },
-                
                     series,
                 }
                 this.setState({

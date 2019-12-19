@@ -21,10 +21,10 @@ export async function statisticDailyLogTask(date) {
 export async function statisticMonthlyLogTask(startDate, endDate)  {
     const params = {}
     if(startDate !== undefined) {
-        params.startDate = startDate.split("-").slice(0, -1).join("-");
+        params.startDate = startDate;
     }
     if(endDate !== undefined) {
-        params.endDate = endDate.split("-").slice(0, -1).join("-");
+        params.endDate = endDate;
     }
     console.log("params: ", params);
 

@@ -8,6 +8,45 @@ import qs from 'query-string';
 import {  statisticMonthlyLogTask } from '../../../api/LogTask/LogTaskRestAPI';
 import { TASK_TYPE, LOG_ACTIONS } from '../../../constants/constants';
 
+const initOptions = {
+
+    chart: {
+        type: 'column'
+    },
+
+    title: {
+        text: 'Statistic Log Task Daily'
+    },
+
+    xAxis: {
+        categories: [],
+    },
+
+    yAxis: {
+        allowDecimals: false,
+        min: 0,
+        title: {
+            text: 'Number of actions'
+        }
+    },
+
+    tooltip: {
+        formatter: function () {
+            return '<b>' + this.x + '</b><br/>' +
+                this.series.userOptions.stack + " - " + this.series.name + ': ' + this.y + '<br/>' +
+                'Total: ' + this.point.stackTotal;
+        }
+    },
+
+    plotOptions: {
+        column: {
+            stacking: 'normal'
+        }
+    },
+
+    series: [],
+};
+
 class StatisticLogTaskMonthly extends Component {
     constructor(props) {
         super(props);
@@ -32,17 +71,17 @@ class StatisticLogTaskMonthly extends Component {
     
     statisticMonthlyLogTask = (startDate, endDate) => {
         statisticMonthlyLogTask(startDate, endDate).then(success => {
-            this.setState({
-                startDate: startDate != undefined ? moment(startDate, "YYYY-MM-DD").toDate() : new Date(),
-                endDate: endDate != undefined ? moment(endDate, "YYYY-MM-DD").toDate() : new Date(),
-            });
             console.log("success: ", success);
             const results = success.data.results;
             if (Object.entries(results).length === 0 && results.constructor === Object) {
-                this.setState({
-                    startDate: startDate != undefined ? moment(startDate, "YYYY-MM-DD").toDate() : new Date(),
-                    endDate: endDate != undefined ? moment(endDate, "YYYY-MM-DD").toDate() : new Date(),
-                });
+                const newState = {options: initOptions};
+                if(startDate != undefined) {
+                    newState.startDate = moment(startDate, "YYYY-MM").toDate();
+                }
+                if(endDate != undefined) {
+                    newState.endDate = moment(endDate, "YYYY-MM").toDate()
+                }
+                this.setState(newState);
             } else {
                 const keys = Object.keys(results).sort((a, b) => a - b);
                 const values = keys.map(k => {
@@ -75,49 +114,20 @@ class StatisticLogTaskMonthly extends Component {
                     });
                 }
                 const options = {
-
-                    chart: {
-                        type: 'column'
-                    },
-                
-                    title: {
-                        text: 'Statistic Log Task Daily'
-                    },
-                
+                    ...initOptions,
                     xAxis: {
                         categories: keys.map(k => k.split("_").join("-")),
                     },
-                
-                    yAxis: {
-                        allowDecimals: false,
-                        min: 0,
-                        title: {
-                            text: 'Number of actions'
-                        }
-                    },
-                
-                    tooltip: {
-                        formatter: function () {
-                            console.log("series: ", this.series);
-                            return '<b>' + this.x + '</b><br/>' +
-                                this.series.userOptions.stack + " - " + this.series.name + ': ' + this.y + '<br/>' +
-                                'Total: ' + this.point.stackTotal;
-                        }
-                    },
-                
-                    plotOptions: {
-                        column: {
-                            stacking: 'normal'
-                        }
-                    },
-                
                     series,
                 }
-                this.setState({
-                    startDate: startDate != undefined ? moment(startDate, "YYYY-MM-DD").toDate() : new Date(),
-                    endDate: endDate != undefined ? moment(endDate, "YYYY-MM-DD").toDate() : new Date(),
-                    options,
-                });
+                const newState = {options};
+                if(startDate != undefined) {
+                    newState.startDate = moment(startDate, "YYYY-MM").toDate();
+                }
+                if(endDate != undefined) {
+                    newState.endDate = moment(endDate, "YYYY-MM").toDate()
+                }
+                this.setState(newState);
             }
         }).catch(error => {
             console.log("error: ", error);
@@ -126,7 +136,7 @@ class StatisticLogTaskMonthly extends Component {
 
     onDateChange = (key, date) => {
         let options = qs.parse(this.props.location.search);
-        options[key] = moment(date).format("YYYY-MM-DD");
+        options[key] = moment(date).format("YYYY-MM");
         this.props.history.push({
             pathname: '/statistic-log-task-monthly',
             search: qs.stringify(options),
@@ -144,20 +154,22 @@ class StatisticLogTaskMonthly extends Component {
                                     <Col sm="3" md="2">
                                         <DatePicker
                                             className="form-control"
-                                            dateFormat="yyyy-MM-dd"
+                                            dateFormat="yyyy-MM"
                                             selected={this.state.startDate}
                                             maxDate={this.state.endDate}
                                             onChange={(date) => this.onDateChange("startDate", date)} //when day is clicked
+                                            showMonthYearPicker
                                         />
                                     </Col>
                                     <span>~</span>
                                     <Col sm="3" md="2">
                                         <DatePicker
                                             className="form-control"
-                                            dateFormat="yyyy-MM-dd"
+                                            dateFormat="yyyy-MM"
                                             selected={this.state.endDate}
                                             maxDate={moment().toDate()}
                                             onChange={(date) => this.onDateChange("endDate", date)} //when day is clicked
+                                            showMonthYearPicker
                                         />
                                     </Col>
                                 </Row>
