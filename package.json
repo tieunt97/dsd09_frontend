@@ -45,9 +45,7 @@
     "react-toastify": "^5.4.1",
     "reactstrap": "^8.0.0",
     "simple-line-icons": "^2.4.1",
-    "styled-components": "^4.4.1"
-  },
-  "devDependencies": {
+    "styled-components": "^4.4.1",
     "react-scripts": "^3.0.1"
   },
   "scripts": {

@@ -1,4 +1,4 @@
-export const BASE_URL_LOG_SERVICE = "http://localhost:8000/api/v1"
+export const BASE_URL_LOG_SERVICE = "https://logservice09.herokuapp.com/api/v1"
 
 export const LOG_ACTIONS = {
   POST: 'POST',
