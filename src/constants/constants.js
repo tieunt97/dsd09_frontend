@@ -7,6 +7,17 @@ export const LOG_ACTIONS = {
   GET: 'GET',
 };
 
+export const LOG_REPORT_ACTION = {
+  CREATE: 'CREATE',
+  EDIT: 'EDIT',
+  DELETE: 'DELETE',
+};
+
+export const LOG_REPORT_STATUS = {
+  SUCCESS: 'SUCCESS',
+  ERROR: 'ERROR',
+};
+
 export const TASK_TYPE = {
   PROJECT_TASK: 'PROJECT_TASK',
   PROCEDURE_TASK: 'PROCEDURE_TASK',

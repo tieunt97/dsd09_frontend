@@ -53,7 +53,7 @@ export default {
         },
         {
           name: '\u00A0\u00A0Log Report Statistic',
-          url: '/log-report-statistic',
+          url: '/log-report-month-statistic',
           icon: 'icon-book-open',
           class:'custom-sub-menu'
         },

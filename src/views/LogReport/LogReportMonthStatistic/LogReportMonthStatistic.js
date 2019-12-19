@@ -5,8 +5,8 @@ import HighchartsReact from 'highcharts-react-official';
 import DatePicker from 'react-datepicker';
 import moment from 'moment';
 import qs from 'query-string';
-import {  statisticMonthlyLogTask } from '../../../api/LogTask/LogTaskRestAPI';
-import { TASK_TYPE, LOG_ACTIONS } from '../../../constants/constants';
+import {  statisticReportForMonth } from '../../../api/LogReport/LogReportRestAPI';
+import { LOG_REPORT_ACTION, LOG_REPORT_STATUS } from '../../../constants/constants';
 
 const initOptions = {
 
@@ -15,7 +15,7 @@ const initOptions = {
     },
 
     title: {
-        text: 'Statistic Log Task Monthly'
+        text: 'Log Report Statistic'
     },
 
     xAxis: {
@@ -47,7 +47,7 @@ const initOptions = {
     series: [],
 };
 
-class LogReportStatistic extends Component {
+class LogReportMonthStatistic extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -60,26 +60,26 @@ class LogReportStatistic extends Component {
     componentDidUpdate(prevProps) {
         if(this.props.location.search !== prevProps.location.search) {
             const params = qs.parse(this.props.location.search);
-            this.statisticMonthlyLogTask(params.startDate, params.endDate);
+            this.statisticReportForMonth(params.startDate, params.endDate);
         }
     }
 
     componentDidMount() {
         const params = qs.parse(this.props.location.search);
-        this.statisticMonthlyLogTask(params.startDate, params.endDate);
+        this.statisticReportForMonth(params.startDate, params.endDate);
     }
 
-    statisticMonthlyLogTask = (startDate, endDate) => {
-        statisticMonthlyLogTask(startDate, endDate).then(success => {
+    statisticReportForMonth = (startDate, endDate) => {
+      statisticReportForMonth(startDate, endDate).then(success => {
             console.log("success: ", success);
-            const results = success.data.results;
+            const results = success.data.result;
             if (Object.entries(results).length === 0 && results.constructor === Object) {
                 const newState = {options: initOptions};
                 if(startDate != undefined) {
-                    newState.startDate = moment(startDate, "YYYY-MM").toDate();
+                    newState.startDate = moment(startDate, "YYYY-MM-DD").toDate();
                 }
                 if(endDate != undefined) {
-                    newState.endDate = moment(endDate, "YYYY-MM").toDate()
+                    newState.endDate = moment(endDate, "YYYY-MM-DD").toDate()
                 }
                 this.setState(newState);
             } else {
@@ -87,30 +87,30 @@ class LogReportStatistic extends Component {
                 const values = keys.map(k => {
                     return results[k];
                 });
-                const taskTypes = Object.keys(TASK_TYPE);
-                const logActions = Object.keys(LOG_ACTIONS);
+                const logReportAction = Object.keys(LOG_REPORT_ACTION);
+                const logReportStatus = Object.keys(LOG_REPORT_STATUS);
                 const pairValues = [];
                 const datas = [];
-                taskTypes.forEach(tasktype => {
-                    logActions.forEach(action => {
-                        pairValues.push(`${tasktype.toLowerCase()}-${action.toLowerCase()}`);
+                logReportAction.forEach(action => {
+                  logReportStatus.forEach(status => {
+                        pairValues.push(`${action.toLowerCase()}-${status.toLowerCase()}`);
                         datas.push([]);
                     });
                 });
                 values.forEach(v => {
                     for (let i = 0; i < pairValues.length; i++) {
-                        const [task, action] = pairValues[i].split('-');
-                        const value = (v[task] || {})[action] || 0;
+                        const [action, status] = pairValues[i].split('-');
+                        const value = (v[action] || {})[status] || 0;
                         datas[i].push(value);
                     }
                 });
                 const series = [];
                 for (let i = 0; i < pairValues.length; i++) {
-                    const [task, action] = pairValues[i].split('-');
+                    const [action, status] = pairValues[i].split('-');
                     series.push({
-                        name: action,
+                        name: status,
                         data: datas[i],
-                        stack: task,
+                        stack: action,
                     });
                 }
                 const options = {
@@ -122,10 +122,10 @@ class LogReportStatistic extends Component {
                 }
                 const newState = {options};
                 if(startDate != undefined) {
-                    newState.startDate = moment(startDate, "YYYY-MM").toDate();
+                    newState.startDate = moment(startDate, "YYYY-MM-DD").toDate();
                 }
                 if(endDate != undefined) {
-                    newState.endDate = moment(endDate, "YYYY-MM").toDate()
+                    newState.endDate = moment(endDate, "YYYY-MM-DD").toDate()
                 }
                 this.setState(newState);
             }
@@ -136,9 +136,9 @@ class LogReportStatistic extends Component {
 
     onDateChange = (key, date) => {
         let options = qs.parse(this.props.location.search);
-        options[key] = moment(date).format("YYYY-MM");
+        options[key] = moment(date).format("YYYY-MM-DD");
         this.props.history.push({
-            pathname: '/statistic-log-task-monthly',
+            pathname: '/log-report-statistic',
             search: qs.stringify(options),
         });
     }
@@ -154,22 +154,20 @@ class LogReportStatistic extends Component {
                                     <Col sm="3" md="2">
                                         <DatePicker
                                             className="form-control"
-                                            dateFormat="yyyy-MM"
+                                            dateFormat="yyyy-MM-dd"
                                             selected={this.state.startDate}
                                             maxDate={this.state.endDate}
                                             onChange={(date) => this.onDateChange("startDate", date)} //when day is clicked
-                                            showMonthYearPicker
                                         />
                                     </Col>
                                     <span>~</span>
                                     <Col sm="3" md="2">
                                         <DatePicker
                                             className="form-control"
-                                            dateFormat="yyyy-MM"
+                                            dateFormat="yyyy-MM-dd"
                                             selected={this.state.endDate}
                                             maxDate={moment().toDate()}
                                             onChange={(date) => this.onDateChange("endDate", date)} //when day is clicked
-                                            showMonthYearPicker
                                         />
                                     </Col>
                                 </Row>
@@ -186,4 +184,4 @@ class LogReportStatistic extends Component {
     }
 }
 
-export default LogReportStatistic;
+export default LogReportMonthStatistic;
