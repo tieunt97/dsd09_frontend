@@ -116,7 +116,6 @@ function Users() {
   }
 
   function openUserModal(title, user, type) {
-    console.log('vao', user);
     setTitle(title);
     setSelectedUser(user);
     setAction(type);
@@ -127,10 +126,25 @@ function Users() {
     setIsOpenReset(true);
   }
 
+  function updateTable(user, type) {
+    console.log('user', user);
+    if(user) {
+      if(type === 'update') {
+        const list = userList.map(item => {
+          if(item.id === user.id) return user;
+          return item;
+        });
+        setUserList(list);
+      } else {
+        userList.push(user);
+      }
+    }
+  }
+
   return (
     <Container>
       <ResetPasswordModal isOpenReset={isOpenReset} setIsOpenReset={setIsOpenReset} />
-      <UserModal isOpen={isOpen} setIsOpen={setIsOpen} title={title} selectedUser={selectedUser} action={action} />
+      <UserModal isOpen={isOpen} setIsOpen={setIsOpen} title={title} selectedUser={selectedUser} action={action} updateTable={updateTable} />
       <div className="animated fadeIn">
         <Row>
           <Col>
