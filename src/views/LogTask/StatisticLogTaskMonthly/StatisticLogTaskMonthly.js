@@ -15,7 +15,7 @@ const initOptions = {
     },
 
     title: {
-        text: 'Statistic Log Task Daily'
+        text: 'Statistic Log Task Monthly'
     },
 
     xAxis: {

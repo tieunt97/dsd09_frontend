@@ -15,8 +15,8 @@ const routes = [
   { path: '/users', exact: true,  name: 'User Management', component: Users },
   { path: '/users/:id', exact: true, name: 'User Details', component: User },
   { path: '/log-task', exact: true, name: 'Log Task List', component: LogTaskList },
-  { path: '/statistic-log-task-daily', exact: true, name: 'Statistic Log Task', component: StatisticLogTaskDaily },
-  { path: '/statistic-log-task-monthly', exact: true, name: 'Statistic Log Task', component: StatisticLogTaskMonthly },
+  { path: '/statistic-log-task-daily', exact: true, name: 'Statistic Log Task Daily', component: StatisticLogTaskDaily },
+  { path: '/statistic-log-task-monthly', exact: true, name: 'Statistic Log Task Monthly', component: StatisticLogTaskMonthly },
   { path: '/statistic-log-department', exact: true, name: 'Statistic Department', component: StatisticLogDepartment },
 ];
 
