@@ -52,8 +52,26 @@ export default {
           class:'custom-sub-menu'
         },
         {
-          name: '\u00A0\u00A0Log Report Statistic',
+          name: '\u00A0\u00A0Statistic Dayly',
+          url: '/log-report-day-statistic',
+          icon: 'icon-book-open',
+          class:'custom-sub-menu'
+        },
+        {
+          name: '\u00A0\u00A0Statistic Monthly',
           url: '/log-report-month-statistic',
+          icon: 'icon-book-open',
+          class:'custom-sub-menu'
+        },
+        {
+          name: '\u00A0\u00A0Statistic Yearly',
+          url: '/log-report-year-statistic',
+          icon: 'icon-book-open',
+          class:'custom-sub-menu'
+        },
+        {
+          name: '\u00A0\u00A0Statistic Type',
+          url: '/log-report-service-statistic',
           icon: 'icon-book-open',
           class:'custom-sub-menu'
         },

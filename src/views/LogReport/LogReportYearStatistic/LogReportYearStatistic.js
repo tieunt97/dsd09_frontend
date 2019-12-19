@@ -5,7 +5,7 @@ import HighchartsReact from 'highcharts-react-official';
 import DatePicker from 'react-datepicker';
 import moment from 'moment';
 import qs from 'query-string';
-import {  statisticReportForMonth } from '../../../api/LogReport/LogReportRestAPI';
+import {  statisticReportForYear } from '../../../api/LogReport/LogReportRestAPI';
 import { LOG_REPORT_ACTION, LOG_REPORT_STATUS } from '../../../constants/constants';
 
 const initOptions = {
@@ -15,7 +15,7 @@ const initOptions = {
     },
 
     title: {
-        text: 'Statistic For Month'
+        text: 'Statistic For Year'
     },
 
     xAxis: {
@@ -47,11 +47,11 @@ const initOptions = {
     series: [],
 };
 
-class LogReportMonthStatistic extends Component {
+class LogReportYearStatistic extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            startDate: moment().subtract(1, 'year').toDate(),
+            startDate: moment().subtract(5, 'year').toDate(),
             endDate: moment().toDate(),
             options: {},
         }
@@ -60,17 +60,17 @@ class LogReportMonthStatistic extends Component {
     componentDidUpdate(prevProps) {
         if(this.props.location.search !== prevProps.location.search) {
             const params = qs.parse(this.props.location.search);
-            this.statisticReportForMonth(params.startDate, params.endDate);
+            this.statisticReportForYear(params.startDate, params.endDate);
         }
     }
 
     componentDidMount() {
         const params = qs.parse(this.props.location.search);
-        this.statisticReportForMonth(params.startDate, params.endDate);
+        this.statisticReportForYear(params.startDate, params.endDate);
     }
 
-    statisticReportForMonth = (startDate, endDate) => {
-      statisticReportForMonth(startDate, endDate).then(success => {
+    statisticReportForYear = (startDate, endDate) => {
+      statisticReportForYear(startDate, endDate).then(success => {
             console.log("success: ", success);
             const results = success.data.result;
             if (Object.entries(results).length === 0 && results.constructor === Object) {
@@ -138,7 +138,7 @@ class LogReportMonthStatistic extends Component {
         let options = qs.parse(this.props.location.search);
         options[key] = moment(date).format("YYYY-MM-DD");
         this.props.history.push({
-            pathname: '/log-report-month-statistic',
+            pathname: '/log-report-year-statistic',
             search: qs.stringify(options),
         });
     }
@@ -184,4 +184,4 @@ class LogReportMonthStatistic extends Component {
     }
 }
 
-export default LogReportMonthStatistic;
+export default LogReportYearStatistic;

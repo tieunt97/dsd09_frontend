@@ -5,7 +5,7 @@ import HighchartsReact from 'highcharts-react-official';
 import DatePicker from 'react-datepicker';
 import moment from 'moment';
 import qs from 'query-string';
-import {  statisticReportForMonth } from '../../../api/LogReport/LogReportRestAPI';
+import {  statisticReportForDay } from '../../../api/LogReport/LogReportRestAPI';
 import { LOG_REPORT_ACTION, LOG_REPORT_STATUS } from '../../../constants/constants';
 
 const initOptions = {
@@ -15,7 +15,7 @@ const initOptions = {
     },
 
     title: {
-        text: 'Statistic For Month'
+        text: 'Statistic For Day'
     },
 
     xAxis: {
@@ -32,9 +32,9 @@ const initOptions = {
 
     tooltip: {
         formatter: function () {
-          return '<b>' + this.x + '</b><br/>' +
-            this.series.name + ': ' + this.y + '<br/>' +
-            'Total: ' + this.point.stackTotal;
+            return '<b>' + this.x + '</b><br/>' +
+              this.series.name + ': ' + this.y + '<br/>' +
+              'Total: ' + this.point.stackTotal;
         }
     },
 
@@ -47,7 +47,7 @@ const initOptions = {
     series: [],
 };
 
-class LogReportMonthStatistic extends Component {
+class LogReportDayStatistic extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -60,75 +60,75 @@ class LogReportMonthStatistic extends Component {
     componentDidUpdate(prevProps) {
         if(this.props.location.search !== prevProps.location.search) {
             const params = qs.parse(this.props.location.search);
-            this.statisticReportForMonth(params.startDate, params.endDate);
+            this.statisticReportForDay(params.startDate, params.endDate);
         }
     }
 
     componentDidMount() {
         const params = qs.parse(this.props.location.search);
-        this.statisticReportForMonth(params.startDate, params.endDate);
+        this.statisticReportForDay(params.startDate, params.endDate);
     }
 
-    statisticReportForMonth = (startDate, endDate) => {
-      statisticReportForMonth(startDate, endDate).then(success => {
-            console.log("success: ", success);
-            const results = success.data.result;
-            if (Object.entries(results).length === 0 && results.constructor === Object) {
-                const newState = {options: initOptions};
-                if(startDate != undefined) {
-                    newState.startDate = moment(startDate, "YYYY-MM-DD").toDate();
-                }
-                if(endDate != undefined) {
-                    newState.endDate = moment(endDate, "YYYY-MM-DD").toDate()
-                }
-                this.setState(newState);
-            } else {
-                const keys = Object.keys(results).sort((a, b) => a - b);
-                const values = keys.map(k => {
-                    return results[k];
-                });
-                const logReportAction = Object.keys(LOG_REPORT_ACTION);
-                const logReportStatus = Object.keys(LOG_REPORT_STATUS);
-                const pairValues = [];
-                const datas = [];
-                logReportAction.forEach(action => {
-                  logReportStatus.forEach(status => {
-                        pairValues.push(`${action.toLowerCase()}-${status.toLowerCase()}`);
-                        datas.push([]);
-                    });
-                });
-                values.forEach(v => {
-                    for (let i = 0; i < pairValues.length; i++) {
-                        const [action, status] = pairValues[i].split('-');
-                        const value = (v[action] || {})[status] || 0;
-                        datas[i].push(value);
-                    }
-                });
-                const series = [];
-                for (let i = 0; i < pairValues.length; i++) {
-                    const [action, status] = pairValues[i].split('-');
-                    series.push({
-                        name: `${action}-${status}`,
-                        data: datas[i],
-                        stack: action,
-                    });
-                }
-                const options = {
-                    ...initOptions,
-                    xAxis: {
-                        categories: keys.map(k => k.split("_").join("-")),
-                    },
-                    series,
-                }
-                const newState = {options};
-                if(startDate != undefined) {
-                    newState.startDate = moment(startDate, "YYYY-MM-DD").toDate();
-                }
-                if(endDate != undefined) {
-                    newState.endDate = moment(endDate, "YYYY-MM-DD").toDate()
-                }
-                this.setState(newState);
-            }
+    statisticReportForDay = (startDate, endDate) => {
+      statisticReportForDay(startDate, endDate).then(success => {
+          console.log("success: ", success);
+          const results = success.data.result;
+          if (Object.entries(results).length === 0 && results.constructor === Object) {
+              const newState = {options: initOptions};
+              if(startDate != undefined) {
+                  newState.startDate = moment(startDate, "YYYY-MM-DD").toDate();
+              }
+              if(endDate != undefined) {
+                  newState.endDate = moment(endDate, "YYYY-MM-DD").toDate()
+              }
+              this.setState(newState);
+          } else {
+              const keys = Object.keys(results).sort((a, b) => a - b);
+              const values = keys.map(k => {
+                  return results[k];
+              });
+              const logReportAction = Object.keys(LOG_REPORT_ACTION);
+              const logReportStatus = Object.keys(LOG_REPORT_STATUS);
+              const pairValues = [];
+              const datas = [];
+              logReportAction.forEach(action => {
+                logReportStatus.forEach(status => {
+                      pairValues.push(`${action.toLowerCase()}-${status.toLowerCase()}`);
+                      datas.push([]);
+                  });
+              });
+              values.forEach(v => {
+                  for (let i = 0; i < pairValues.length; i++) {
+                      const [action, status] = pairValues[i].split('-');
+                      const value = (v[action] || {})[status] || 0;
+                      datas[i].push(value);
+                  }
+              });
+              const series = [];
+              for (let i = 0; i < pairValues.length; i++) {
+                  const [action, status] = pairValues[i].split('-');
+                  series.push({
+                      name: `${action}-${status}`,
+                      data: datas[i],
+                      stack: action,
+                  });
+              }
+              const options = {
+                  ...initOptions,
+                  xAxis: {
+                      categories: keys.map(k => k.split("_").join("-")),
+                  },
+                  series,
+              }
+              const newState = {options};
+              if(startDate != undefined) {
+                  newState.startDate = moment(startDate, "YYYY-MM-DD").toDate();
+              }
+              if(endDate != undefined) {
+                  newState.endDate = moment(endDate, "YYYY-MM-DD").toDate()
+              }
+              this.setState(newState);
+          }
         }).catch(error => {
             console.log("error: ", error);
         });
@@ -138,7 +138,7 @@ class LogReportMonthStatistic extends Component {
         let options = qs.parse(this.props.location.search);
         options[key] = moment(date).format("YYYY-MM-DD");
         this.props.history.push({
-            pathname: '/log-report-month-statistic',
+            pathname: '/log-report-day-statistic',
             search: qs.stringify(options),
         });
     }
@@ -184,4 +184,4 @@ class LogReportMonthStatistic extends Component {
     }
 }
 
-export default LogReportMonthStatistic;
+export default LogReportDayStatistic;
