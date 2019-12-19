@@ -55,12 +55,3 @@ export async function statisicMemberGroupYearType(params) {
         params,
     });
 }
-
-// statisticMemberGroupDay,
-//   statisicMemberGroupMonth,
-//   statisicMemberGroupYear,
-//   statisticMemberGroupStatus,
-//   statisticMemberGroupType,
-//   statisticMemberGroupDayType,
-//   statisicMemberGroupMonthType,
-//   statisicMemberGroupYearType,
