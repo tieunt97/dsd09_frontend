@@ -1,0 +1,6 @@
+{
+  "name": "LogReportStatistic",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./LogReportStatistic.js"
+}
