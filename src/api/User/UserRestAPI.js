@@ -1,6 +1,6 @@
 import axios from '../axiosCreator';
 
-const BASE_URL = 'http://localhost:8000/api/v1'; // server userservice
+const BASE_URL = 'https://userservice09.herokuapp.com/api/v1'; // server userservice
 
 async function getAllUser(userId) {
   try {
