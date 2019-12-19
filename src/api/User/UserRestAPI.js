@@ -80,10 +80,26 @@ async function resetPassword(userId) {
   }
 }
 
+async function getRestOfRole(userId) {
+  try {
+    const params = {};
+    if(userId) {
+      params.userId = userId;
+    }
+    const response = await axios.get(`${BASE_URL}/users/rest-of-role`, {
+      params,
+  });
+    return response;
+  } catch (error) {
+    return error.response;
+  }
+}
+
 export default {
   getAllUser,
   deleteUser,
   updateUser,
   createUser,
   resetPassword,
+  getRestOfRole,
 };

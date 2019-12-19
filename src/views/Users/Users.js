@@ -10,6 +10,7 @@ import apis from '../../api/User/UserRestAPI';
 import { userRoles } from '../../constants/constants';
 import UserModal from './UserModal';
 import ResetPasswordModal from './ResetPasswordModal';
+import AddRoleModal from './AddRoleModal';
 
 toast.configure({
   autoClose: 3000,
@@ -40,6 +41,10 @@ function UserRow(props) {
     props.openUserModal(title, user, type);
   }
 
+  function openAddRoleModal(userId) {
+    props.openAddRoleModal(userId);
+  }
+
   return (
     <tr key={user.id.toString()}>
       <th scope="row" className="th-center-text"><Link to={userLink}>{user.id}</Link></th>
@@ -55,7 +60,7 @@ function UserRow(props) {
             ''
           )}
         </div>
-        <i className="icon-plus icon-add-role"></i>
+        <i className="icon-plus icon-add-role" onClick={() => openAddRoleModal(user.id)}></i>
       </td>
       <td className="th-center-text">{user.registered}</td>
       <td className="th-center-text"><Link to={userLink}><Badge color={getBadge(user.status)}>{user.status}</Badge></Link></td>
@@ -75,6 +80,8 @@ function Users() {
   const [action, setAction] = useState('');
 
   const [ isOpenReset, setIsOpenReset ] = useState(false);
+  const [ isOpenAddRole, setIsOpenAddRole ] = useState(false);
+  const [ restOfRole, setRestOfRole ] = useState([]);
 
   async function getAllUser() {
     try {
@@ -141,10 +148,24 @@ function Users() {
     }
   }
 
+  async function openAddRoleModal(userId) {
+    try {
+      const {data} = await apis.getRestOfRole(userId);
+      if(!data.status) throw new Error();
+      if(data.result && data.result.length) {
+        setRestOfRole(data.result);
+      }
+      setIsOpenAddRole(true);
+    } catch (error) {
+      console.log('error', error);
+    }
+  }
+
   return (
     <Container>
       <ResetPasswordModal isOpenReset={isOpenReset} setIsOpenReset={setIsOpenReset} />
       <UserModal isOpen={isOpen} setIsOpen={setIsOpen} title={title} selectedUser={selectedUser} action={action} updateTable={updateTable} />
+      <AddRoleModal isOpenAddRole={isOpenAddRole} setIsOpenAddRole={setIsOpenAddRole} restOfRole={restOfRole} />
       <div className="animated fadeIn">
         <Row>
           <Col>
@@ -173,7 +194,7 @@ function Users() {
                   </thead>
                   <tbody>
                     {userList.map((user, index) =>
-                      <UserRow key={index} user={user} handleDeleteUser={handleDeleteUser} openUserModal={openUserModal} />
+                      <UserRow key={index} user={user} handleDeleteUser={handleDeleteUser} openUserModal={openUserModal} openAddRoleModal={openAddRoleModal} />
                     )}
                   </tbody>
                 </Table>
